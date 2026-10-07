@@ -6,7 +6,22 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/_GAME/_Scenes/Boot.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/_GAME/_Scenes/Main_Menu.unity
+    guid: 2ac0c3fda2a273a4eb599a6af2e9fe0c
+  - enabled: 1
+    path: Assets/_GAME/_Scenes/Game.unity
+    guid: 5435dc5fb3b3d66468aecf1444628998
+  - enabled: 1
+    path: Assets/_GAME/_Scenes/Settings.unity
+    guid: 94ae2a7078541194fb5f6f13a64487cf
+  - enabled: 1
+    path: Assets/_GAME/_Scenes/Shop.unity
+    guid: a666bfdcbaf687b44817bee11288b97c
+  - enabled: 1
+    path: Assets/_GAME/_Scenes/Wheel_Of_Luck.unity
+    guid: 355f356953e76ab4c8eac7ccdb08ccff
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

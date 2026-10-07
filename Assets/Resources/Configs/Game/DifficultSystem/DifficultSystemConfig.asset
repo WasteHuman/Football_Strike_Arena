@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e9de48bdc2f28a4fbed4e33552a6916, type: 3}
+  m_Name: DifficultSystemConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SO.Game.DifficultSystem.DifficultSystemConfig
+  <DifficultCurve>k__BackingField:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.9001048
+      outSlope: 3.9001048
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.21737298
+    - serializedVersion: 3
+      time: 0.25129282
+      value: 0.61514163
+      inSlope: 1.3712673
+      outSlope: 1.3712673
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.30493656
+      outWeight: 0.09677365
+    - serializedVersion: 3
+      time: 0.5734803
+      value: 0.92142695
+      inSlope: 0.6410069
+      outSlope: 0.6410069
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.26291466
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.99999994
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  <MinTargetsHp>k__BackingField: 2
+  <MaxTargetsHp>k__BackingField: 20
+  <HpRandomRangeOffset>k__BackingField: 2
+  <MaxDifficultyDestroyedTargets>k__BackingField: 25
+  <MinTargetScale>k__BackingField: 0.175
+  <MaxTargetScale>k__BackingField: 0.3

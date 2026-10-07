@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &313970819688820293
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6227695603795684447}
+  - component: {fileID: 3896227968058781680}
+  m_Layer: 0
+  m_Name: '[AUDIO_SERVICE]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6227695603795684447
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313970819688820293}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3896227968058781680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313970819688820293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4991b6a2d827dac49a4e84db94a8cbde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Core.Services.Audio.AudioService
+  _music: {fileID: 8300000, guid: d252d445a72eedc40aa2d56b4e73636f, type: 3}
+  _sounds:
+  - Type: 0
+    Clip: {fileID: 8300000, guid: 064b56bf658bce1469c73b4f982ec370, type: 3}
+  - Type: 2
+    Clip: {fileID: 8300000, guid: 794162941f598af41a9cc44af34caa0d, type: 3}
+  - Type: 3
+    Clip: {fileID: 8300000, guid: d8940b781b8968349ad83daf7b123178, type: 3}
+  - Type: 1
+    Clip: {fileID: 8300000, guid: 731cdd6764ccba74bae417bf0a558dee, type: 3}
+  - Type: 4
+    Clip: {fileID: 8300000, guid: 2d5286ea861316d43b435cb1e5e77a4d, type: 3}
+  - Type: 6
+    Clip: {fileID: 8300000, guid: 1a94f68c33deb044a9d08b16d3e76965, type: 3}
+  - Type: 7
+    Clip: {fileID: 8300000, guid: 17c98d7f5e4cfd94c812ff630f244517, type: 3}
+  - Type: 5
+    Clip: {fileID: 8300000, guid: 1ce4dd9303ca09941b7ce3981bb56a55, type: 3}
+  _musicSource: {fileID: 0}
+  _sfxSource: {fileID: 0}
