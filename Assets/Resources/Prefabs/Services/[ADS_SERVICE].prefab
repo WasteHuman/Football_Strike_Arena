@@ -44,5 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e73e84df60411954dabcc308bfb95182, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Core.Services.AdsService.AdsService
-  _isEnabled: 0
-  _isTestMode: 0
+  _isEnabled: 1
+  _interstitialAdPlacement: 
+  _rewardedAdPlacement: 
+  _interstitialAdShowrate: 0.5

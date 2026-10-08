@@ -30,7 +30,7 @@ namespace Core.Services.Player
         }
 
         public void DoublePlayerDamage() => _currentPlayerData.CurrentPlayerDamage *= 2;
-        public void ReducePlayerReload() => _currentPlayerData.CurrentPlayerReload *= 0.85f;
+        public void ReducePlayerReload() => _currentPlayerData.CurrentPlayerReload *= 0.55f;
         public void MarkTutorialAsCompleted()
         {
             _currentPlayerData.IsTutorialCompleted = true;

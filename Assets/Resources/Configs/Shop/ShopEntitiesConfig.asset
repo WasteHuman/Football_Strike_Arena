@@ -13,24 +13,31 @@ MonoBehaviour:
   m_Name: ShopEntitiesConfig
   m_EditorClassIdentifier: Assembly-CSharp::Core.SO.ShopEntitiesConfig
   <PlayerSkinsData>k__BackingField:
-  - EntityID: Skin_0
+  - EntityID: Neon_Grid_Skin
     EntityItemSprite: {fileID: 21300000, guid: b0e9266bfe150c44da00794a5025a8f7, type: 3}
-    EntitySkinSprite: {fileID: 21300000, guid: 9159aa6ac2c9e2b48bebeb298e919070, type: 3}
+    EntitySkinSprite: {fileID: 21300000, guid: 84e06a26d36f78943a60ae2211357ba0, type: 3}
     EntityCost: 0
     Type: 1
     EntityDescription: 
     IsPurchased: 1
-  - EntityID: Skin_1
+  - EntityID: Sunset_Drive_Skin
     EntityItemSprite: {fileID: 21300000, guid: a2cb1a24e27e3bf4aa6654f4a4782a6c, type: 3}
-    EntitySkinSprite: {fileID: 21300000, guid: 824585c05b711344497af380ee895e3a, type: 3}
+    EntitySkinSprite: {fileID: 21300000, guid: 4136428adbee46143b04d893a7d2f64a, type: 3}
     EntityCost: 1500
     Type: 1
     EntityDescription: 
     IsPurchased: 0
-  - EntityID: Skin_2
+  - EntityID: Acid_Night_Skin
     EntityItemSprite: {fileID: 21300000, guid: 21f5d565b932ffe49ae26ce249e6aa62, type: 3}
-    EntitySkinSprite: {fileID: 21300000, guid: 3d3bcba9949ac124997c6d3c0ecc9f4c, type: 3}
+    EntitySkinSprite: {fileID: 21300000, guid: f2af327985c0a5a4fb20414075812a0a, type: 3}
     EntityCost: 2500
+    Type: 1
+    EntityDescription: 
+    IsPurchased: 0
+  - EntityID: Violet_Pulse_Skin
+    EntityItemSprite: {fileID: 21300000, guid: 21f5d565b932ffe49ae26ce249e6aa62, type: 3}
+    EntitySkinSprite: {fileID: 21300000, guid: d91e0bc9338a25945a518cafe1bb90f9, type: 3}
+    EntityCost: 5000
     Type: 1
     EntityDescription: 
     IsPurchased: 0
