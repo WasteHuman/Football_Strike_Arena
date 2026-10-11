@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Io.AppMetrica;
 using UnityEngine;
 
 namespace Core.Services.Analytics
@@ -237,7 +238,7 @@ namespace Core.Services.Analytics
         /// <summary>
         /// Отправка события в интегрированную аналитику
         /// </summary>
-        private void SendAnalyticsEvent(string eventName, string jsonValue) => AppMetrica.Instance.ReportEvent(eventName, jsonValue);
+        private void SendAnalyticsEvent(string eventName, string jsonValue) => AppMetrica.ReportEvent(eventName, jsonValue);
 
         // ===== HELPER CLASS =====
 

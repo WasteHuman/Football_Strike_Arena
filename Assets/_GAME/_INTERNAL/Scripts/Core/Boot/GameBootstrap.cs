@@ -3,6 +3,7 @@ using Core.Services.AdsService;
 using Core.Services.Analytics;
 using Core.Services.Audio;
 using Core.SO.DebugConfigs;
+using Io.AppMetrica;
 using System.Collections;
 using UI.Loading;
 using UnityEngine;
@@ -54,9 +55,9 @@ namespace Core.Boot
 
             try
             {
-                AppMetrica.Instance.ActivateWithConfiguration(new YandexAppMetricaConfig("8c2cbb76-0d63-4dab-8aad-613ced351760")
+                AppMetrica.Activate(new AppMetricaConfig("8c2cbb76-0d63-4dab-8aad-613ced351760")
                 {
-                    HandleFirstActivationAsUpdate = !IsFirstLaunch()
+                    FirstActivationAsUpdate = !IsFirstLaunch()
                 });
                 Debug.Log($"[GlobalAction Bootstrap] AppMetrica initialized successfully");
             }
