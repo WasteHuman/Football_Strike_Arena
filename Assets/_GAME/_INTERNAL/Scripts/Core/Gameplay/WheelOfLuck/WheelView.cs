@@ -72,7 +72,7 @@ namespace Core.WheelOfLuck
             if (_startSpinButton == null)
                 return;
 
-            if(!_startSpinButton.gameObject.activeSelf)
+            if(!_startSpinButton.gameObject.activeSelf || _startSpinButton.transform.localScale == Vector3.zero)
                 AnimateButtonSwitch(_watchAdButton, _startSpinButton, interactable);
 
             _startSpinButton.Interactable = interactable;

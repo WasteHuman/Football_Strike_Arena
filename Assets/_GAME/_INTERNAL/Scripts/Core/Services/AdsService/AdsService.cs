@@ -232,6 +232,7 @@ namespace Core.Services.AdsService
         {
             Debug.Log("[Ads] The user has finished viewing the ad");
 
+            _isReadyToShow = false;
             _onRewardCallback?.Invoke();
             _onRewardCallback = null;
         }
