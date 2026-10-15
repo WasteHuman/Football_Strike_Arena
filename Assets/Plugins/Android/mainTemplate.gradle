@@ -7,7 +7,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 // Android Resolver Dependencies Start
     implementation 'androidx.annotation:annotation:1.7.1' // Packages/io.appmetrica.analytics/Editor/AppMetricaDependencies.xml:5
-    implementation 'com.yandex.android:mobileads-mediation:8.4.0.0' // Assets/YandexMobileAds/Editor/YandexMobileadsMediationDependencies.xml:14
+    implementation 'com.yandex.android:mobileads-mediation:8.6.0.0' // Assets/YandexMobileAds/Editor/YandexMobileadsMediationDependencies.xml:14
     // implementation 'io.appmetrica.analytics:analytics:8.0.0' // Assets/YandexMobileAds/Editor/YandexMobileadsMediationDependencies.xml:15
     implementation 'io.appmetrica.analytics:analytics:8.4.1' // Packages/io.appmetrica.analytics/Editor/AppMetricaDependencies.xml:4
 // Android Resolver Dependencies End

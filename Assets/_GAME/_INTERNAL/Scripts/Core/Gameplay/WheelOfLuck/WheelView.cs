@@ -16,20 +16,27 @@ namespace Core.WheelOfLuck
         [SerializeField] private List<RewardView> _rewardViews = new();
 
         [Header("Text")]
-        [SerializeField] private TextMeshProUGUI _cooldownText;
-        [SerializeField] private TextMeshProUGUI _spinsCountText;
+        [SerializeField] private TextMeshProUGUI _cooldownLabel;
+        [SerializeField] private TextMeshProUGUI _spinsCountLabel;
 
         [Header("Buttons")]
         [SerializeField] private ActionButton _startSpinButton;
+        [SerializeField] private ActionButton _watchAdButton;
 
         private Vector2 _originalScale;
 
         private Tween _spinTween;
         private Tween _pulseTween;
+
+        private Tween _switchFromButtonTween;
+        private Tween _switchToButtonTween;
+
         private Action _spinButtonHandler;
+        private Action _watchAdButtonHandler;
 
         public IReadOnlyList<RewardView> RewardViews => _rewardViews;
         public event Action OnSpinClicked;
+        public event Action OnWatchAdClicked;
 
         public void Enter()
         {
@@ -37,6 +44,12 @@ namespace Core.WheelOfLuck
             {
                 _spinButtonHandler = () => OnSpinClicked?.Invoke();
                 _startSpinButton.OnButtonClick += _spinButtonHandler;
+            }
+
+            if(_watchAdButton != null)
+            {
+                _watchAdButtonHandler = () => OnWatchAdClicked?.Invoke();
+                _watchAdButton.OnButtonClick += _watchAdButtonHandler;
             }
 
             _originalScale = _wheelTransform.localScale;
@@ -49,6 +62,9 @@ namespace Core.WheelOfLuck
 
             if (_startSpinButton != null)
                 _startSpinButton.OnButtonClick -= _spinButtonHandler;
+
+            if(_watchAdButton != null)
+                _watchAdButton.OnButtonClick -= _watchAdButtonHandler;
         }
 
         public void SetSpinInteractable(bool interactable)
@@ -56,32 +72,73 @@ namespace Core.WheelOfLuck
             if (_startSpinButton == null)
                 return;
 
-            _startSpinButton.Interactable = interactable;
-            if(interactable)
-                _cooldownText.gameObject.SetActive(false);
+            if(!_startSpinButton.gameObject.activeSelf)
+                AnimateButtonSwitch(_watchAdButton, _startSpinButton, interactable);
 
-            if (!interactable)
-            {
-                _startSpinButton.Animations.StopPulseAnimation();
-                _startSpinButton.Animations.StopHoverAnimation();
-            }
+            _startSpinButton.Interactable = interactable;
+            
+            if(interactable)
+                _cooldownLabel.gameObject.SetActive(false);
+        }
+
+        public void SetWatchAdInteractable(bool interactable)
+        {
+            if(_watchAdButton == null)
+                return;
+
+            if(!_watchAdButton.gameObject.activeSelf)
+                AnimateButtonSwitch(_startSpinButton, _watchAdButton, interactable);
+        }
+
+        private void AnimateButtonSwitch(ActionButton from, ActionButton to, bool interactable)
+        {
+            if(from == null || to == null)
+                return;
+
+            float animationDuration = 0.15f;
+
+            to.transform.localScale = Vector2.zero;
+
+            _switchFromButtonTween?.Kill();
+
+            _switchFromButtonTween = from.transform
+                .DOScale(0f, animationDuration)
+                .OnComplete(() =>
+                {
+                    if (!interactable)
+                    {
+                        from.Animations.StopPulseAnimation();
+                        from.Animations.StopHoverAnimation();
+                    }
+
+                    from.gameObject.SetActive(!interactable);
+                    to.gameObject.SetActive(interactable);
+
+                    _switchToButtonTween?.Kill();
+
+                    _switchToButtonTween = to.transform
+                        .DOScale(Vector2.one, animationDuration)
+                        .OnComplete(() =>
+                        {
+                        });
+                });
         }
 
         public void SetFreeSpins(int amount)
         {
-            if (_spinsCountText != null)
-                _spinsCountText.text = $"{amount}";
+            if (_spinsCountLabel != null)
+                _spinsCountLabel.text = $"{amount}";
         }
 
         public void SetCooldown(TimeSpan remaining)
         {
-            if (_cooldownText == null)
+            if (_cooldownLabel == null)
                 return;
 
-            if(!_cooldownText.gameObject.activeSelf && remaining.Hours > 0f)
-                _cooldownText.gameObject.SetActive(true);
+            if(!_cooldownLabel.gameObject.activeSelf && remaining.Hours > 0f)
+                _cooldownLabel.gameObject.SetActive(true);
 
-            _cooldownText.text = FormatTimeSpan(remaining);
+            _cooldownLabel.text = FormatTimeSpan(remaining);
         }
 
         public void SetPulse(bool enabled)

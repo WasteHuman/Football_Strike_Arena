@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using Core.Common;
+using Core.Services.AdsService;
 using UI.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static Core.WheelOfLuck.WheelReward;
 
 namespace Core.WheelOfLuck
 {
@@ -13,7 +15,7 @@ namespace Core.WheelOfLuck
         [SerializeField] private WheelView _view;
         [SerializeField] private PlayerInfoPanelView _playerInfoView;
 
-        [Header("Debug")]
+        [Space(5), Header("Debug")]
         [SerializeField] private bool _isDebug;
 
         private WheelState _state;
@@ -61,6 +63,7 @@ namespace Core.WheelOfLuck
             RefreshView();
 
             _view.OnSpinClicked += HandleSpinClicked;
+            _view.OnWatchAdClicked += HandleWatchAdClicked;
         }
 
         public override void Initialize()
@@ -72,7 +75,10 @@ namespace Core.WheelOfLuck
         public override void Exit()
         {
             if (_view != null)
+            {
+                _view.OnWatchAdClicked -= HandleWatchAdClicked;
                 _view.OnSpinClicked -= HandleSpinClicked;
+            }
 
             StopCooldownUpdater();
             _playerInfoView.Dispose();
@@ -94,8 +100,7 @@ namespace Core.WheelOfLuck
 
         public bool IsAvailable()
         {
-            return !_config.HasCooldown ||
-                   DateTimeOffset.UtcNow >= _state.NextAvailableUtc;
+            return !_config.HasCooldown || DateTimeOffset.UtcNow >= _state.NextAvailableUtc;
         }
 
         public TimeSpan GetRemainingCooldown()
@@ -133,10 +138,21 @@ namespace Core.WheelOfLuck
             return true;
         }
 
+        public bool CanWatchAd()
+        {
+            if(_state.PendingReward == null)
+                return false;
+
+            if(!AdsService.Instance.IsReadyToShow)
+                return false;
+
+            return true;
+        }
+
         /// <summary>
         /// Starts a regular free spin.
         /// </summary>
-        public void PrepareAndStartSpin(Action onComplete = null)
+        public void PrepareAndStartSpin(Action onComplete = null, Action fallbackAction = null)
         {
             if (!CanSpin())
             {
@@ -169,7 +185,7 @@ namespace Core.WheelOfLuck
                 targetIndex,
                 _config.SpinDuration,
                 _config.MinFullRotations,
-                () => FinishSpin(onComplete));
+                () => FinishSpin(onComplete, fallbackAction));
         }
 
         /// <summary>
@@ -193,13 +209,64 @@ namespace Core.WheelOfLuck
             OnStateChanged?.Invoke();
         }
 
+        /// <summary>
+        /// CLaims the reward selected by the latest completed spin.
+        /// </summary>
+        public void ClaimWithAd()
+        {
+            if(_state.PendingReward == null)
+            {
+                Debug.LogWarning("[Wheel] There is no pending reward to claim.");
+                return;
+            }
+
+            WheelReward reward = _state.PendingReward;
+
+            AdsService.Instance.ShowRewardedAd(() =>
+            {
+                _rewardService.Apply(reward);
+                _state.PendingReward = null;
+                _view.SetSpinInteractable(_state.FreeSpins > 0);
+            });
+
+            RefreshView();
+            OnStateChanged?.Invoke();
+        }
+
         private void HandleSpinClicked()
         {
-            PrepareAndStartSpin(() => ClaimWithoutAd());
+            PrepareAndStartSpin(
+                onComplete: () =>
+                {
+                    _view.SetSpinInteractable(false);
+                    _view.SetWatchAdInteractable(CanWatchAd());
+                },
+                fallbackAction: () =>
+                {
+                    _view.SetWatchAdInteractable(false);
+                    _view.SetSpinInteractable(CanSpin());
+                    _view.SetPulse(CanSpin());
+                    Debug.Log("Fallback Action");
+                    Debug.Log($"Can Spin State: {CanSpin()}");
+                });
             _state.FreeSpins = Mathf.Max(0, _state.FreeSpins - 1);
         }
 
-        private void FinishSpin(Action onComplete)
+        private void HandleWatchAdClicked()
+        {
+            if(CanWatchAd())
+                ClaimWithAd();
+            else
+                FallbackClaimWithAd();
+        }
+
+        private void FallbackClaimWithAd()
+        {
+            ClaimWithoutAd();
+            Debug.Log("Fallback reward claim");
+        }
+
+        private void FinishSpin(Action onComplete, Action fallbackAction = null)
         {
             _state.IsSpinning = false;
 
@@ -217,7 +284,10 @@ namespace Core.WheelOfLuck
 
             RefreshView();
 
-            onComplete?.Invoke();
+            if(_state.PendingReward.Type != RewardType.Nothing)
+                onComplete?.Invoke();
+            else
+                fallbackAction?.Invoke();
         }
 
         private bool TrySpendEnergy()
@@ -255,11 +325,6 @@ namespace Core.WheelOfLuck
 
             _view.SetFreeSpins(_state.FreeSpins);
             _view.SetCooldown(GetRemainingCooldown());
-
-            bool canSpin = CanSpin();
-
-            _view.SetSpinInteractable(canSpin);
-            _view.SetPulse(canSpin);
         }
 
         private void StartCooldownUpdater()
@@ -290,7 +355,7 @@ namespace Core.WheelOfLuck
                         IsAvailable() &&
                         _state.FreeSpins > 0)
                     {
-                        _view.SetSpinInteractable(CanSpin());
+                        // _view.SetSpinInteractable(CanSpin());
                         _view.SetPulse(CanSpin());
                     }
                 }

@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: WheelConfig
   m_EditorClassIdentifier: Assembly-CSharp::Core.WheelOfLuck.WheelConfig
   _stateId: wheel
-  _gameId: MellB_Cannon_Strike
+  _gameId: Football_Strike:Arena
   _spinDuration: 4
   _minFullRotations: 4
-  _initialFreeSpins: 1
+  _initialFreeSpins: 5
   _autoGrantFreeSpinWhenAvailable: 1
   _hasCooldown: 1
   _cooldownHours: 12

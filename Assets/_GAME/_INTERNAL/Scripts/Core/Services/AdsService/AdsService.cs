@@ -13,7 +13,7 @@ namespace Core.Services.AdsService
 
         [Space(5), Header("Ad Placements Setup")]
         [SerializeField] private string _interstitialAdPlacement;
-        [SerializeField] private string _rewardedAdPlacement;
+        [SerializeField] private string _claimWheelOfLuckAdPlacement;
 
         [Space(5), Header("Interstitial Ad Showrate Setup")]
         [SerializeField] private float _interstitialAdShowrate = 0.5f;
@@ -22,6 +22,7 @@ namespace Core.Services.AdsService
 
         private static AdsService _instance;
         private bool _isRewardedVideoLoading;
+        private bool _isReadyToShow;
 
         private InterstitialAdLoader _interstitialAdLoader;
         private RewardedAdLoader _rewardedAdLoader;
@@ -31,10 +32,8 @@ namespace Core.Services.AdsService
 
         private Action _onRewardCallback;
 
-        public static AdsService Instance
-        {
-            get => _instance;
-        }
+        public static AdsService Instance => _instance;
+        public bool IsReadyToShow => _isReadyToShow;
 
         private void Awake()
         {
@@ -70,6 +69,8 @@ namespace Core.Services.AdsService
 
                 _interstitialAdLoader = new();
                 _rewardedAdLoader = new();
+
+                _isReadyToShow = false;
 
                 bool currentConsent = PlayerPrefs.GetInt("gdpr_consent_granted", 1) == 1;
                 long timestamp = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
@@ -128,7 +129,7 @@ namespace Core.Services.AdsService
         {
             SetRewardedLoadingState(true);
 
-            string adUnitId = _rewardedAdPlacement;
+            string adUnitId = _claimWheelOfLuckAdPlacement;
 
             try
             {
@@ -175,6 +176,7 @@ namespace Core.Services.AdsService
         {
             SetRewardedLoadingState(false);
             _rewardedAd = loadedAd;
+            _isReadyToShow = true;
 
             _rewardedAd.OnRewarded += HandleRewarded;
             _rewardedAd.OnAdShown += HandleRewardedAdShown;
