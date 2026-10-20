@@ -24,6 +24,7 @@
 
         #region Economy & Player Data
         public const float INITIAL_COINS = 1000f;
+        public const int INITIAL_BEST_SCORE = 0;
         public const int INITIAL_PLAYER_DAMAGE = 2;
         public const string INITIAL_PLAYER_SKIN_ID = "Neon_Grid_Skin";
         public const string INITIAL_PLAYER_BALL_SKIN_ID = "Ball_0";

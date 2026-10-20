@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using YandexMobileAds;
@@ -11,12 +12,10 @@ namespace Core.Services.AdsService
         [Header("Service Settings")]
         [SerializeField] private bool _isEnabled = false;
 
-        [Space(5), Header("Ad Placements Setup")]
-        [SerializeField] private string _interstitialAdPlacement;
-        [SerializeField] private string _claimWheelOfLuckAdPlacement;
-
         [Space(5), Header("Interstitial Ad Showrate Setup")]
         [SerializeField] private float _interstitialAdShowrate = 0.5f;
+
+        private Dictionary<AdType, string> _placementsDict;
 
         private bool _isInitialized = false;
 
@@ -67,6 +66,14 @@ namespace Core.Services.AdsService
             {
                 Debug.Log("[Ads] Initialization Yandex Ads...");
 
+                _placementsDict = new()
+                {
+                    {AdType.Lose_Interstitial, "R-M-20200744-1"},
+                    {AdType.Claim_Wheel_Of_Luck_Pending_Reward_Rewarded, "R-M-20200744-2"},
+                    {AdType.Double_Score_Per_Session_Rewarded, "R-M-20200744-3"},
+                    {AdType.Double_Coins_Per_Sessoin_Rewarded, "R-M-20200744-4"}
+                };
+
                 _interstitialAdLoader = new();
                 _rewardedAdLoader = new();
 
@@ -80,6 +87,7 @@ namespace Core.Services.AdsService
 
                 _isInitialized = true;
                 Debug.Log("[Ads] Yandex SDK successfully initialized.");
+                Debug.Log($"[Ads] Rewarded ad loaded: {_rewardedAd != null}");
             }
             catch (Exception ex)
             {
@@ -95,7 +103,7 @@ namespace Core.Services.AdsService
                 _interstitialAd?.Show();
         }
 
-        public void ShowRewardedAd(Action onRewardCallback)
+        public void ShowRewardedAd(AdType type, Action onRewardCallback)
         {
             if (!_isEnabled)
             {
@@ -120,16 +128,23 @@ namespace Core.Services.AdsService
             if(!_isRewardedVideoLoading)
                 _rewardedAd?.Show();
             else
-                AsyncLoadRewardedAd().Forget();
+                AsyncLoadRewardedAd(type).Forget();
         }
 
         public bool IsRewardedAdLoaded() => _rewardedAd != null;
 
-        private async UniTask AsyncLoadRewardedAd()
+        private async UniTask AsyncLoadRewardedAd(AdType type = AdType.Claim_Wheel_Of_Luck_Pending_Reward_Rewarded)
         {
             SetRewardedLoadingState(true);
+            string adUnitId;
 
-            string adUnitId = _claimWheelOfLuckAdPlacement;
+            if(_placementsDict.TryGetValue(type, out string placementId))
+                adUnitId = placementId;
+            else
+            {
+                Debug.LogWarning($"[Ads] Placement by type {type} not found!");
+                return;
+            }
 
             try
             {
@@ -144,7 +159,15 @@ namespace Core.Services.AdsService
 
         private async UniTask AsyncLoadInterstitialAd()
         {
-            string adUnitId = _interstitialAdPlacement;
+            string adUnitId;
+
+            if(_placementsDict.TryGetValue(AdType.Lose_Interstitial, out string placementId))
+                adUnitId = placementId;
+            else
+            {
+                Debug.LogWarning($"[Ads] Placement by type {AdType.Lose_Interstitial} not found!");
+                return;
+            }
 
             try
             {

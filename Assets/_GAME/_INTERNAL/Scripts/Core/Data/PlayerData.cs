@@ -13,6 +13,7 @@ namespace Core.Data
         public int CurrentPlayerDamage;
         public float CurrentPlayerReload;
         public float Coins;
+        public int BestScore;
         public bool IsTutorialCompleted;
         public DateTime? LastDailyBonusTime;
 
@@ -67,6 +68,9 @@ namespace Core.Data
 
             if (Coins <= 0)
                 Coins = GameConstants.INITIAL_COINS;
+
+            if(BestScore <= 0)
+                BestScore = GameConstants.INITIAL_BEST_SCORE;
 
             if (PlayerPrefs.HasKey(GameConstants.KEY_TUTORIAL_COMPLETED) && !IsTutorialCompleted)
                 IsTutorialCompleted = PlayerPrefs.GetInt(GameConstants.KEY_TUTORIAL_COMPLETED) == 1;

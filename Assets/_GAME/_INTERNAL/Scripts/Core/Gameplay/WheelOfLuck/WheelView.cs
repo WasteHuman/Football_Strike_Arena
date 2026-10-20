@@ -97,31 +97,7 @@ namespace Core.WheelOfLuck
 
             float animationDuration = 0.15f;
 
-            to.transform.localScale = Vector2.zero;
-
-            _switchFromButtonTween?.Kill();
-
-            _switchFromButtonTween = from.transform
-                .DOScale(0f, animationDuration)
-                .OnComplete(() =>
-                {
-                    if (!interactable)
-                    {
-                        from.Animations.StopPulseAnimation();
-                        from.Animations.StopHoverAnimation();
-                    }
-
-                    from.gameObject.SetActive(!interactable);
-                    to.gameObject.SetActive(interactable);
-
-                    _switchToButtonTween?.Kill();
-
-                    _switchToButtonTween = to.transform
-                        .DOScale(Vector2.one, animationDuration)
-                        .OnComplete(() =>
-                        {
-                        });
-                });
+            
         }
 
         public void SetFreeSpins(int amount)

@@ -222,7 +222,7 @@ namespace Core.WheelOfLuck
 
             WheelReward reward = _state.PendingReward;
 
-            AdsService.Instance.ShowRewardedAd(() =>
+            AdsService.Instance.ShowRewardedAd(AdType.Claim_Wheel_Of_Luck_Pending_Reward_Rewarded, () =>
             {
                 _rewardService.Apply(reward);
                 _state.PendingReward = null;
