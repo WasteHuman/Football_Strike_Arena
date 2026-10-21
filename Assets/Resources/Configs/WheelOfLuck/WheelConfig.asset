@@ -22,3 +22,4 @@ MonoBehaviour:
   _cooldownHours: 12
   _requiresEnergy: 0
   _energyCost: 0
+  <IsDebug>k__BackingField: 0

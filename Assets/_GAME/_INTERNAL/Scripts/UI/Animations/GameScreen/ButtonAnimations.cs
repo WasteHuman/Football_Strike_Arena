@@ -34,7 +34,7 @@ namespace UI.Animations.GameScreen
 
         private RectTransform _rectTransform;
 
-        private Vector2 _originalScale;
+        private Vector2 _originalScale = Vector2.one;
         private Vector2 _pulseTargetScale;
 
         private Tween _pulseTween;
@@ -49,7 +49,9 @@ namespace UI.Animations.GameScreen
         public void Init(RectTransform target)
         {
             _rectTransform = target;
-            _originalScale = _rectTransform.localScale;
+
+            if(_rectTransform.localScale == Vector3.zero)
+                _originalScale = Vector2.one;
 
             _clickAnimationDuration = 0.05f;
 

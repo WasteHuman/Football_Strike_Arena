@@ -55,7 +55,7 @@ namespace Core.Boot
 
             try
             {
-                AppMetrica.Activate(new AppMetricaConfig("8c2cbb76-0d63-4dab-8aad-613ced351760")
+                AppMetrica.Activate(new AppMetricaConfig("341a9063-1dc5-4411-961c-e76eddf682dd")
                 {
                     FirstActivationAsUpdate = !IsFirstLaunch()
                 });

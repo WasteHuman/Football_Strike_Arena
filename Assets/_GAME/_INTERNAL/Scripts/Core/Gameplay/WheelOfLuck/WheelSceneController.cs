@@ -226,7 +226,7 @@ namespace Core.WheelOfLuck
             {
                 _rewardService.Apply(reward);
                 _state.PendingReward = null;
-                _view.SetSpinInteractable(_state.FreeSpins > 0);
+                _view.SetSpinInteractable(_state.FreeSpins > 0, true);
             });
 
             RefreshView();
@@ -238,13 +238,15 @@ namespace Core.WheelOfLuck
             PrepareAndStartSpin(
                 onComplete: () =>
                 {
-                    _view.SetSpinInteractable(false);
-                    _view.SetWatchAdInteractable(CanWatchAd());
+                    _view.SetSpinInteractable(false, true);
+                    _view.SetWatchAdInteractable(CanWatchAd(), true);
+                    Debug.Log("On Complete Action");
+                    Debug.Log($"Can Watch Ad State: {CanWatchAd()}");
                 },
                 fallbackAction: () =>
                 {
-                    _view.SetWatchAdInteractable(false);
-                    _view.SetSpinInteractable(CanSpin());
+                    _view.SetWatchAdInteractable(false, true);
+                    _view.SetSpinInteractable(CanSpin(), true);
                     _view.SetPulse(CanSpin());
                     Debug.Log("Fallback Action");
                     Debug.Log($"Can Spin State: {CanSpin()}");
@@ -279,15 +281,15 @@ namespace Core.WheelOfLuck
 
             Debug.Log($"[Wheel] Spin finished. Reward: {reward}");
 
-            OnSpinFinished?.Invoke(reward);
-            OnStateChanged?.Invoke();
-
-            RefreshView();
-
             if(_state.PendingReward.Type != RewardType.Nothing)
                 onComplete?.Invoke();
             else
                 fallbackAction?.Invoke();
+
+            OnSpinFinished?.Invoke(reward);
+            OnStateChanged?.Invoke();
+
+            RefreshView();
         }
 
         private bool TrySpendEnergy()

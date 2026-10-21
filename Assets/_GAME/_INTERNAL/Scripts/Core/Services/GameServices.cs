@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using Core.Gameplay;
 using Core.Services.Player;
 using Core.Services.SaveSystem;
 using Core.Services.Shop;
 using Core.SO;
+using SO.Game;
 using UnityEngine;
 
 namespace Core.Services
@@ -21,8 +21,15 @@ namespace Core.Services
             SaveService = new();
             SaveService.Init(isDebug);
 
+            var playerUpgradesConfig = Resources.Load<PlayerUpgradesConfig>("Configs/Shop/PlayerUpgradesConfig");
+            if(playerUpgradesConfig == null)
+            {
+                Debug.LogError($"[Game Services] Player Upgrades Config is null!");
+                return;
+            }
+
             PlayerService = new();
-            PlayerService.Init(SaveService.PlayerData);
+            PlayerService.Init(SaveService.PlayerData, playerUpgradesConfig);
 
             EconomyService = new();
             EconomyService.Init(PlayerService.PlayerCoins);

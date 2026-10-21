@@ -35,7 +35,7 @@ MonoBehaviour:
     EntityDescription: 
     IsPurchased: 0
   - EntityID: Violet_Pulse_Skin
-    EntityItemSprite: {fileID: 21300000, guid: 21f5d565b932ffe49ae26ce249e6aa62, type: 3}
+    EntityItemSprite: {fileID: 21300000, guid: 111448af13f4ef34d810397f4369b45b, type: 3}
     EntitySkinSprite: {fileID: 21300000, guid: d91e0bc9338a25945a518cafe1bb90f9, type: 3}
     EntityCost: 5000
     Type: 1

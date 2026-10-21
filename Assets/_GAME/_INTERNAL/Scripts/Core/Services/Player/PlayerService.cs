@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.Data;
+using SO.Game;
 using UnityEngine;
 
 namespace Core.Services.Player
@@ -7,6 +8,8 @@ namespace Core.Services.Player
     public class PlayerService
     {
         private PlayerData _currentPlayerData;
+
+        private PlayerUpgradesConfig _playerUpgradesConfig;
 
         private int _sessionPlayerScore;
         private int _sessionEarnedCoins;
@@ -24,13 +27,14 @@ namespace Core.Services.Player
         public event Action<string> OnPlayerSkinChanged;
         public event Action<int> OnCurrentPlayerScoreChanged;
 
-        public void Init(PlayerData playerData)
+        public void Init(PlayerData playerData, PlayerUpgradesConfig playerUpgradesConfig)
         {
             _currentPlayerData = playerData;
+            _playerUpgradesConfig = playerUpgradesConfig;
         }
 
-        public void DoublePlayerDamage() => _currentPlayerData.CurrentPlayerDamage *= 2;
-        public void ReducePlayerReload() => _currentPlayerData.CurrentPlayerReload *= 0.55f;
+        public void IncreasePlayerDamage() => _currentPlayerData.CurrentPlayerDamage *= _playerUpgradesConfig.PlayerDamageIncreaseMultiplier;
+        public void ReducePlayerReload() => _currentPlayerData.CurrentPlayerReload *= _playerUpgradesConfig.PlayerReloadReduceMultilplier;
         public void MarkTutorialAsCompleted()
         {
             _currentPlayerData.IsTutorialCompleted = true;

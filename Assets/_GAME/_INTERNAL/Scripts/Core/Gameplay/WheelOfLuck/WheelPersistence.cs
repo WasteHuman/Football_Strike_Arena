@@ -17,6 +17,9 @@ namespace Core.WheelOfLuck
 
         public void Load(WheelState state, WheelConfig config)
         {
+            if(config.IsDebug)
+                PlayerPrefs.DeleteKey(_prefix + FreeSpinsSuffix);
+
             state.FreeSpins = PlayerPrefs.GetInt(
                 _prefix + FreeSpinsSuffix,
                 config.InitialFreeSpins);

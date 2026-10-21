@@ -28,7 +28,7 @@
         public const int INITIAL_PLAYER_DAMAGE = 2;
         public const string INITIAL_PLAYER_SKIN_ID = "Neon_Grid_Skin";
         public const string INITIAL_PLAYER_BALL_SKIN_ID = "Ball_0";
-        public const float INITIAL_PLAYER_RELOAD = 0.35f;
+        public const float INITIAL_PLAYER_RELOAD = 0.45f;
         #endregion
     }
 }

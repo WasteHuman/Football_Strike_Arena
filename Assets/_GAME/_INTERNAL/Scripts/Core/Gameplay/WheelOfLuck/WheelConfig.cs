@@ -32,6 +32,9 @@ namespace Core.WheelOfLuck
         [SerializeField] private bool _requiresEnergy;
         [SerializeField, Min(0)] private int _energyCost;
 
+        [field: Header("Debug")]
+        [field :SerializeField] public bool IsDebug { get; private set; } = false;
+
         public string StateId => string.IsNullOrWhiteSpace(_stateId) ? name : _stateId;
         public string GameId => _gameId;
         public float SpinDuration => _spinDuration;

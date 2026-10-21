@@ -112,7 +112,7 @@ namespace Core.Services.Shop
             _playerService.AddUpgradeToPurchased(upgrade.EntityID);
 
             if(upgradeId.Contains("Damage"))
-                _playerService.DoublePlayerDamage();
+                _playerService.IncreasePlayerDamage();
              
             if(upgradeId.Contains("Reload"))
                 _playerService.ReducePlayerReload();

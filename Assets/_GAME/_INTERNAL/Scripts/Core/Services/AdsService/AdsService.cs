@@ -30,6 +30,7 @@ namespace Core.Services.AdsService
         private RewardedAd _rewardedAd;
 
         private Action _onRewardCallback;
+        private Action _onInterstitialCallback;
 
         public static AdsService Instance => _instance;
         public bool IsReadyToShow => _isReadyToShow;
@@ -79,9 +80,6 @@ namespace Core.Services.AdsService
 
                 _isReadyToShow = false;
 
-                bool currentConsent = PlayerPrefs.GetInt("gdpr_consent_granted", 1) == 1;
-                long timestamp = (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
-
                 await AsyncLoadInterstitialAd();
                 await AsyncLoadRewardedAd();
 
@@ -95,12 +93,19 @@ namespace Core.Services.AdsService
             }
         }
 
-        public void ShowInterstitialAd()
+        public void ShowInterstitialAd(Action onComplete = null, bool useRandomFactor = false)
         {
             float randRoll = UnityEngine.Random.Range(0f, 1f);
 
-            if(randRoll > _interstitialAdShowrate)
+            _onInterstitialCallback = onComplete;
+
+            if(useRandomFactor && randRoll > _interstitialAdShowrate)
+            {
                 _interstitialAd?.Show();
+                return;
+            }
+
+            _interstitialAd?.Show();
         }
 
         public void ShowRewardedAd(AdType type, Action onRewardCallback)
@@ -217,12 +222,25 @@ namespace Core.Services.AdsService
             _interstitialAd.OnAdDismissed += HandleInterstitialAdDismissed;
             _interstitialAd.OnAdFailedToShow += HandleInterstitialAdFailedToShow;
             _interstitialAd.OnAdShown += HandleInterstitialAdShown;
+            _interstitialAd.OnAdImpression += HandleInterstitialAdImpression;
+        }
+
+        private void HandleInterstitialAdImpression(object sender, ImpressionData e)
+        {
+            DestroyInterstitial();
+            AsyncLoadInterstitialAd().Forget();
+
+            _onInterstitialCallback?.Invoke();
+            _onInterstitialCallback = null;
         }
 
         private void HandleInterstitialAdShown(object sender, EventArgs e)
         {
             DestroyInterstitial();
             AsyncLoadInterstitialAd().Forget();
+
+            _onInterstitialCallback?.Invoke();
+            _onInterstitialCallback = null;
         }
 
         private void HandleInterstitialAdFailedToShow(object sender, AdFailureEventArgs e)

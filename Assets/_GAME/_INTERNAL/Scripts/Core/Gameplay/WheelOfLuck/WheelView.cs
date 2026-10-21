@@ -28,8 +28,8 @@ namespace Core.WheelOfLuck
         private Tween _spinTween;
         private Tween _pulseTween;
 
-        private Tween _switchFromButtonTween;
-        private Tween _switchToButtonTween;
+        private Tween _switchSpinButtonTween;
+        private Tween _switchWatchAdButtonTween;
 
         private Action _spinButtonHandler;
         private Action _watchAdButtonHandler;
@@ -67,37 +67,67 @@ namespace Core.WheelOfLuck
                 _watchAdButton.OnButtonClick -= _watchAdButtonHandler;
         }
 
-        public void SetSpinInteractable(bool interactable)
+        public void SetSpinInteractable(bool interactable, bool useSwitch = false)
         {
             if (_startSpinButton == null)
                 return;
 
-            if(!_startSpinButton.gameObject.activeSelf || _startSpinButton.transform.localScale == Vector3.zero)
-                AnimateButtonSwitch(_watchAdButton, _startSpinButton, interactable);
+            if (!_startSpinButton.gameObject.activeSelf)
+            {
+                _startSpinButton.transform.localScale = Vector2.zero;
+                _startSpinButton.gameObject.SetActive(true);
+            }
 
             _startSpinButton.Interactable = interactable;
+
+            if(useSwitch)
+                AnimateButtonSwitch(_switchSpinButtonTween, _startSpinButton, interactable);
             
             if(interactable)
                 _cooldownLabel.gameObject.SetActive(false);
         }
 
-        public void SetWatchAdInteractable(bool interactable)
+        public void SetWatchAdInteractable(bool interactable, bool useSwitch = false)
         {
             if(_watchAdButton == null)
                 return;
 
-            if(!_watchAdButton.gameObject.activeSelf)
-                AnimateButtonSwitch(_startSpinButton, _watchAdButton, interactable);
+            if (!_watchAdButton.gameObject.activeSelf)
+            {
+                _watchAdButton.transform.localScale = Vector2.zero;
+                _watchAdButton.gameObject.SetActive(true);
+            }
+
+            _watchAdButton.Interactable = interactable;
+
+            if(useSwitch)
+                AnimateButtonSwitch(_switchWatchAdButtonTween, _watchAdButton, interactable);
         }
 
-        private void AnimateButtonSwitch(ActionButton from, ActionButton to, bool interactable)
+        private void AnimateButtonSwitch(Tween switchTween, ActionButton buttonToAnimate, bool buttonInteractable)
         {
-            if(from == null || to == null)
-                return;
+            float animDuration = 0.275f;
+            Vector2 targetScale = buttonInteractable ? Vector2.one : Vector2.zero;
 
-            float animationDuration = 0.15f;
+            Debug.Log($"[Wheel View] Button '{buttonToAnimate.gameObject.name}' has target scale: '{targetScale}' and interactable state: '{buttonInteractable}'");
 
-            
+            switchTween?.Kill(true);
+
+            switchTween = buttonToAnimate.transform
+                .DOScale(targetScale, animDuration)
+                .SetEase(Ease.InOutSine)
+                .OnComplete(() =>
+                {
+                    if (buttonInteractable)
+                    {
+                        buttonToAnimate.Animations.PulseAnimation();
+                        buttonToAnimate.Animations.HoverAnimation();
+                    }
+                    else
+                        buttonToAnimate.Animations.StopAnimations();
+
+                    buttonToAnimate.gameObject.SetActive(buttonInteractable);
+                });
         }
 
         public void SetFreeSpins(int amount)
