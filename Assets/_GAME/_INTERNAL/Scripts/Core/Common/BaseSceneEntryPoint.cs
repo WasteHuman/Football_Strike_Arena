@@ -7,13 +7,13 @@ namespace Core.Common
     {
         [SerializeField] protected SceneController _controller;
 
-        private void Start()
+        protected virtual void Start()
         {
             _controller.Enter();
             _controller.Initialize();
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             _controller.Exit();
             DOTween.KillAll();

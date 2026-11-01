@@ -79,7 +79,7 @@ namespace Core.Gameplay.Controllers
             }
             else
             {
-                AdsService.Instance.ShowInterstitialAd(() =>
+                AdsService.Instance.ShowInterstitialAd(type: AdType.Lose_Interstitial, () =>
                 {
                     _currentPlayerLoseCount = 0;
                 });

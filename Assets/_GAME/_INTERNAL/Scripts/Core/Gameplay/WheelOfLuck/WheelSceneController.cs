@@ -143,7 +143,7 @@ namespace Core.WheelOfLuck
             if(_state.PendingReward == null)
                 return false;
 
-            if(!AdsService.Instance.IsReadyToShow)
+            if(!AdsService.Instance.IsRewardedAdLoaded(AdType.Claim_Wheel_Of_Luck_Pending_Reward_Rewarded))
                 return false;
 
             return true;
@@ -248,6 +248,7 @@ namespace Core.WheelOfLuck
                     _view.SetWatchAdInteractable(false, true);
                     _view.SetSpinInteractable(CanSpin(), true);
                     _view.SetPulse(CanSpin());
+                    ClaimWithoutAd();
                     Debug.Log("Fallback Action");
                     Debug.Log($"Can Spin State: {CanSpin()}");
                 });
