@@ -21,7 +21,7 @@ namespace Core.WheelOfLuck
 
         [Header("Free Spins")]
         [SerializeField, Min(0)] private int _initialFreeSpins = 1;
-        [Tooltip("Если включено, когда колесо доступно и бесплатных спинов нет, будет выдан 1 спин.")]
+        [Tooltip("Если включено, когда колесо доступно и бесплатных спинов нет, будет обновленно кол-во спинов.")]
         [SerializeField] private bool _autoGrantFreeSpinWhenAvailable = true;
 
         [Header("Cooldown")]

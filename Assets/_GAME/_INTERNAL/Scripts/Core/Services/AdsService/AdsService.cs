@@ -75,11 +75,11 @@ namespace Core.Services.AdsService
 
                 _placementsDict = new()
                 {
-                    {AdType.Lose_Interstitial, new(AdEntityType.Interstitial, AdType.Lose_Interstitial, "demo-interstitial-yandex")},
-                    {AdType.Transition_Interstitial, new(AdEntityType.Interstitial, AdType.Transition_Interstitial, "demo-interstitial-yandex")},
-                    {AdType.Claim_Wheel_Of_Luck_Pending_Reward_Rewarded, new(AdEntityType.Rewarded, AdType.Claim_Wheel_Of_Luck_Pending_Reward_Rewarded, "demo-rewarded-yandex")},
+                    {AdType.Lose_Interstitial, new(AdEntityType.Interstitial, AdType.Lose_Interstitial, "R-M-20200744-1")},
+                    {AdType.Claim_Wheel_Of_Luck_Pending_Reward_Rewarded, new(AdEntityType.Rewarded, AdType.Claim_Wheel_Of_Luck_Pending_Reward_Rewarded, "R-M-20200744-2")},
                     {AdType.Double_Score_Per_Session_Rewarded, new(AdEntityType.Rewarded, AdType.Double_Score_Per_Session_Rewarded, "R-M-20200744-3")},
                     {AdType.Double_Coins_Per_Sessoin_Rewarded, new(AdEntityType.Rewarded, AdType.Double_Coins_Per_Sessoin_Rewarded, "R-M-20200744-4")},
+                    {AdType.Transition_Interstitial, new(AdEntityType.Interstitial, AdType.Transition_Interstitial, "R-M-20200744-5")},
                 };
 
                 _rewardedAdsDict = new();

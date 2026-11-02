@@ -226,6 +226,7 @@ namespace Core.WheelOfLuck
             {
                 _rewardService.Apply(reward);
                 _state.PendingReward = null;
+                _view.SetWatchAdInteractable(false, true);
                 _view.SetSpinInteractable(_state.FreeSpins > 0, true);
             });
 
@@ -257,15 +258,22 @@ namespace Core.WheelOfLuck
 
         private void HandleWatchAdClicked()
         {
+            #if UNITY_EDITOR
+            FallbackClaimWithAd();
+            #elif !UNITY_EDITOR
+
             if(CanWatchAd())
                 ClaimWithAd();
             else
                 FallbackClaimWithAd();
+            #endif
         }
 
         private void FallbackClaimWithAd()
         {
             ClaimWithoutAd();
+            _view.SetWatchAdInteractable(false, true);
+            _view.SetSpinInteractable(_state.FreeSpins > 0, true);
             Debug.Log("Fallback reward claim");
         }
 
@@ -315,7 +323,7 @@ namespace Core.WheelOfLuck
             if (!IsAvailable() || _state.FreeSpins > 0)
                 return;
 
-            _state.FreeSpins = 1;
+            _state.FreeSpins = _config.InitialFreeSpins;
             _state.NextAvailableUtc = DateTimeOffset.MinValue;
 
             _persistence.Save(_state);
@@ -358,7 +366,6 @@ namespace Core.WheelOfLuck
                         IsAvailable() &&
                         _state.FreeSpins > 0)
                     {
-                        // _view.SetSpinInteractable(CanSpin());
                         _view.SetPulse(CanSpin());
                     }
                 }
