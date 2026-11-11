@@ -81,7 +81,7 @@ namespace Core.WheelOfLuck
             _startSpinButton.Interactable = interactable;
 
             if(useSwitch)
-                AnimateButtonSwitch(_switchSpinButtonTween, _startSpinButton, interactable);
+                AnimateButtonSwitch(ref _switchSpinButtonTween, _startSpinButton, interactable);
             
             if(interactable)
                 _cooldownLabel.gameObject.SetActive(false);
@@ -101,32 +101,42 @@ namespace Core.WheelOfLuck
             _watchAdButton.Interactable = interactable;
 
             if(useSwitch)
-                AnimateButtonSwitch(_switchWatchAdButtonTween, _watchAdButton, interactable);
+                AnimateButtonSwitch(ref _switchWatchAdButtonTween, _watchAdButton, interactable);
         }
 
-        private void AnimateButtonSwitch(Tween switchTween, ActionButton buttonToAnimate, bool buttonInteractable)
+        private void AnimateButtonSwitch(ref Tween switchTween, ActionButton button, bool shouldBeVisible)
         {
-            float animDuration = 0.275f;
-            Vector2 targetScale = buttonInteractable ? Vector2.one : Vector2.zero;
+            const float animDuration = 0.175f;
+            const float hiddenScaleEpsilon = 0.001f;
 
-            Debug.Log($"[Wheel View] Button '{buttonToAnimate.gameObject.name}' has target scale: '{targetScale}' and interactable state: '{buttonInteractable}'");
+            switchTween?.Kill();
+            switchTween = null;
 
-            switchTween?.Kill(true);
+            if (shouldBeVisible && !button.gameObject.activeSelf)
+            {
+                button.transform.localScale = Vector3.zero;
+                button.gameObject.SetActive(true);
+            }
 
-            switchTween = buttonToAnimate.transform
+            if(!shouldBeVisible && !button.gameObject.activeSelf)
+                return;
+
+            Vector3 targetScale = shouldBeVisible ? Vector3.one : Vector3.zero;
+
+            switchTween = button.transform
                 .DOScale(targetScale, animDuration)
                 .SetEase(Ease.InOutSine)
                 .OnComplete(() =>
                 {
-                    if (buttonInteractable)
+                    if (shouldBeVisible)
                     {
-                        buttonToAnimate.Animations.PulseAnimation();
-                        buttonToAnimate.Animations.HoverAnimation();
+                        button.Animations.PulseAnimation();
+                        button.Animations.HoverAnimation();
                     }
                     else
-                        buttonToAnimate.Animations.StopAnimations();
+                        button.Animations.StopAnimations();
 
-                    buttonToAnimate.gameObject.SetActive(buttonInteractable);
+                    button.gameObject.SetActive(shouldBeVisible);
                 });
         }
 

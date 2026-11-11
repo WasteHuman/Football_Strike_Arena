@@ -23,20 +23,25 @@ namespace Core.Services.AdsService
         private Dictionary<Interstitial, AdType> _interstitialTypeByInstanceDict;
         private Dictionary<RewardedAd, AdType> _rewardedAdTypeByInstanceDict;
 
+        private HashSet<AdType> _pendingRewardedLoads;
+
         private bool _isInitialized = false;
 
         private static AdsService _instance;
-        private bool _isRewardedVideoLoading;
+        private bool _isRewardedShowRequested;
         private bool _isReadyToShow;
 
         private InterstitialAdLoader _interstitialAdLoader;
         private RewardedAdLoader _rewardedAdLoader;
 
         private Action _onRewardCallback;
+        private Action _onRewardDismissedCallback;
         private Action _onInterstitialCallback;
 
         public static AdsService Instance => _instance;
         public bool IsReadyToShow => _isReadyToShow;
+
+        public event Action<AdType> OnRewardedAvailabilityChanged;
 
         private void Awake()
         {
@@ -72,6 +77,7 @@ namespace Core.Services.AdsService
 
                 _interstitialTypeByInstanceDict = new();
                 _rewardedAdTypeByInstanceDict = new();
+                _pendingRewardedLoads = new();
 
                 _placementsDict = new()
                 {
@@ -122,38 +128,50 @@ namespace Core.Services.AdsService
                 AsyncLoadInterstitialAd(type).Forget();
         }
 
-        public void ShowRewardedAd(AdType type, Action onRewardCallback)
+        public void ShowRewardedAd(AdType type, Action onRewardCallback, Action onDismissedCallback = null)
         {
             if (!_isEnabled)
             {
                 Debug.LogWarning($"[Ads] Cannot show video. SDK is not enabled.");
+                onDismissedCallback?.Invoke();
                 return;
             }
 
             if (!_isInitialized)
             {
                 Debug.LogWarning("[Ads] Cannot show video. SDK is not initialized.");
+                onDismissedCallback?.Invoke();
                 return;
             }
 
-            if (_isRewardedVideoLoading)
+            if (_isRewardedShowRequested)
             {
                 Debug.LogWarning("[Ads] Rewarded Video is already loading. Please wait.");
                 return;
             }
 
             _onRewardCallback = onRewardCallback;
+            _onRewardDismissedCallback = onDismissedCallback;
 
             if(_rewardedAdsDict.TryGetValue(type, out RewardedAd rewardedAd))
+            {
+                _isRewardedShowRequested = false;
                 rewardedAd?.Show();
+            }
             else
+            {
+                _isRewardedShowRequested = true;
                 AsyncLoadRewardedAd(type).Forget();
+            }
         }
 
         public bool IsRewardedAdLoaded(AdType type)
         {
+            if(_rewardedAdsDict == null)
+                return false;
+
             if(_rewardedAdsDict.TryGetValue(type, out RewardedAd rewardedAd))
-                return true;
+                return rewardedAd != null;
 
             return false;
         }
@@ -182,6 +200,9 @@ namespace Core.Services.AdsService
         {
             if(_rewardedAdsDict.ContainsKey(type))
                 return;
+
+            if (_pendingRewardedLoads.Contains(type))
+                return;
             
             if (!_placementsDict.TryGetValue(type, out AdEntity placement))
             {
@@ -192,6 +213,8 @@ namespace Core.Services.AdsService
             if (placement.PlacementType != AdEntityType.Rewarded)
                 return;
 
+            _pendingRewardedLoads.Add(type);
+
             try
             {
                 var loadedAd = await _rewardedAdLoader.LoadAd(new(placement.PlacementId));
@@ -201,6 +224,10 @@ namespace Core.Services.AdsService
             catch (AdLoadingException e)
             {
                 HandleRewardedFailedToLoad(type, e);
+            }
+            finally
+            {
+                _pendingRewardedLoads.Remove(type);
             }
         }
 
@@ -230,10 +257,11 @@ namespace Core.Services.AdsService
             }
         }
 
-        private void SetRewardedLoadingState(bool isLoading) => _isRewardedVideoLoading = isLoading;
-
         private void DestroyRewarded(AdType type = AdType.None)
         {
+            if (_rewardedAdsDict == null)
+                return;
+
             if(type == AdType.None)
             {
                 foreach (var kpv in _rewardedAdsDict.Keys)
@@ -246,7 +274,7 @@ namespace Core.Services.AdsService
             if(!_rewardedAdsDict.TryGetValue(type, out RewardedAd rewardedAd))
                 return;
 
-            _rewardedAdTypeByInstanceDict.Remove(rewardedAd);
+            _rewardedAdTypeByInstanceDict?.Remove(rewardedAd);
 
             rewardedAd?.Destroy();
             _rewardedAdsDict.Remove(type);
@@ -272,10 +300,15 @@ namespace Core.Services.AdsService
             _interstitialAdsDict.Remove(type);
         }
 
+        private void InvokeRewardDismissedCallback()
+        {
+            var callback = _onRewardDismissedCallback;
+            _onRewardDismissedCallback = null;
+            callback?.Invoke();
+        }
+
         private void HandleRewardedLoaded(AdType type, RewardedAd loadedAd)
         {
-            SetRewardedLoadingState(false);
-
             _rewardedAdsDict[type] = loadedAd;
             _rewardedAdTypeByInstanceDict[loadedAd] = type;
 
@@ -288,8 +321,13 @@ namespace Core.Services.AdsService
             rewardedAd.OnAdFailedToShow += HandleRewardedAdFailedToShow;
             rewardedAd.OnAdDismissed += HandleRewardedAdDismissed;
 
-            if(_isRewardedVideoLoading)
+            OnRewardedAvailabilityChanged?.Invoke(type);
+
+            if (_isRewardedShowRequested)
+            {
+                _isRewardedShowRequested = false;
                 rewardedAd.Show();
+            }
         }
 
         private void HandleInterstitialLoaded(AdType type, Interstitial loadedAd)
@@ -367,10 +405,11 @@ namespace Core.Services.AdsService
 
         private void HandleRewardedFailedToLoad(AdType type, AdLoadingException e)
         {
-            DestroyRewarded(type);
-            AsyncLoadRewardedAd(type).Forget();
+            Debug.LogWarning($"[Ads] Rewarded ad failed to load ({type}): {e.Message}");
 
-            _onRewardCallback = null;
+            DestroyRewarded(type);
+
+            InvokeRewardDismissedCallback();
         }
 
         private void HandleRewarded(object sender, EventArgs e)
@@ -384,16 +423,21 @@ namespace Core.Services.AdsService
 
         private void HandleRewardedAdFailedToShow(object sender, AdFailureEventArgs e)
         {
+            Debug.LogWarning($"[Ads] Rewarded ad failed to show: {e.Message}");
+
             if(sender is not RewardedAd rewardedAd)
+            {
+                InvokeRewardDismissedCallback();
                 return;
+            }
 
-            if(!_rewardedAdTypeByInstanceDict.TryGetValue(rewardedAd, out AdType type))
-                return;
+            if(_rewardedAdTypeByInstanceDict.TryGetValue(rewardedAd, out AdType type))
+            {
+                DestroyRewarded(type);
+                AsyncLoadRewardedAd(type).Forget();
+            }
 
-            SetRewardedLoadingState(false);
-
-            DestroyRewarded(type);
-            AsyncLoadRewardedAd(type).Forget();
+            InvokeRewardDismissedCallback();
         }
 
         private void HandleRewardedAdShown(object sender, EventArgs e)
@@ -407,12 +451,15 @@ namespace Core.Services.AdsService
                 return;
 
             Debug.Log("[Ads] Rewarded ad is closed");
-            SetRewardedLoadingState(false);
 
             if(!_rewardedAdTypeByInstanceDict.TryGetValue(rewardedAd, out AdType type))
                 return;
 
             DestroyRewarded(type);
+
+            AsyncLoadRewardedAd(type).Forget();
+
+            InvokeRewardDismissedCallback();
         }
     }
 }
