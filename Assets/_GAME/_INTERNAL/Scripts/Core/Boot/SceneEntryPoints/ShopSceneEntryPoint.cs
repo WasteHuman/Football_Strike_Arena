@@ -9,6 +9,8 @@ namespace Core.Boot.SceneEntryPoints
         {
             #if !UNITY_EDITOR
             AdsService.Instance.ShowInterstitialAd(type: AdType.Transition_Interstitial, onComplete: () => base.Start(), useRandomFactor: true);
+            #else
+            base.Start();
             #endif
         }
     }
