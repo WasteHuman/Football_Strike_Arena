@@ -126,6 +126,9 @@ namespace Core.WheelOfLuck
                 
             if (_state.IsSpinning)
                 return false;
+            
+            if(_state.PendingReward != null)
+                return false;
 
             if (_state.FreeSpins <= 0)
                 return false;
@@ -207,6 +210,7 @@ namespace Core.WheelOfLuck
             WheelReward reward = _state.PendingReward;
 
             _rewardService.Apply(reward, bonusMultiplier);
+            UpdateButtonStates(canSpin: CanSpin(), canWatchAd: CanWatchAd());
 
             _state.PendingReward = null;
 
@@ -291,14 +295,18 @@ namespace Core.WheelOfLuck
 
             Debug.Log($"[Wheel] Spin finished. Reward: {reward}");
 
-            if (reward != null && reward.Type == RewardType.Nothing)
-                ClaimWithoutAd();
+            RefreshView();
 
             OnSpinFinished?.Invoke(reward);
             OnStateChanged?.Invoke();
 
-            RefreshView();
-            UpdateButtonStates(false, CanWatchAd());
+            if (reward != null && reward.Type == RewardType.Nothing)
+            {
+                ClaimWithoutAd();
+                UpdateButtonStates(CanSpin(), CanWatchAd());
+            }
+            else if(reward != null)
+                UpdateButtonStates(CanSpin(), CanWatchAd());
         }
 
         private void UpdateButtonStates(bool canSpin, bool canWatchAd)

@@ -107,7 +107,6 @@ namespace Core.WheelOfLuck
         private void AnimateButtonSwitch(ref Tween switchTween, ActionButton button, bool shouldBeVisible)
         {
             const float animDuration = 0.175f;
-            const float hiddenScaleEpsilon = 0.001f;
 
             switchTween?.Kill();
             switchTween = null;
