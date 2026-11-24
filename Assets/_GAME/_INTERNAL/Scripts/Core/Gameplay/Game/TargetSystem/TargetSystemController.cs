@@ -73,7 +73,6 @@ namespace Core.Gameplay.Game.TargetSystem
 
             GameServices.PlayerService.IncreasePlayerSessionScore();
             GameServices.PlayerService.AddEarnedCoins(earnedCoins);
-            GameServices.GameSessionService.HandleDestroyedTarget(earnedCoins);
             
             SpawnCoinBurst(view.transform.position, earnedCoins);
         }

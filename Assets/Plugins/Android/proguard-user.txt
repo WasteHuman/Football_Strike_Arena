@@ -1,0 +1,38 @@
+# Unity / Android bridge safety
+-keep class com.unity3d.player.** { *; }
+-keep class com.google.unity.** { *; }
+-keep class org.fmod.** { *; }
+-dontwarn com.unity3d.player.**
+
+# Yandex Mobile Ads SDK + mediation adapters
+-keep class com.yandex.mobile.ads.** { *; }
+-keep class com.yandex.android.** { *; }
+-keep class com.yandex.ads.** { *; }
+-dontwarn com.yandex.mobile.ads.**
+-dontwarn com.yandex.android.**
+-dontwarn com.yandex.ads.**
+
+# RuStore SDK (unity bridge + native sdk)
+-keep class ru.rustore.unitysdk.** { *; }
+-keep class ru.rustore.sdk.** { *; }
+-dontwarn ru.rustore.unitysdk.**
+-dontwarn ru.rustore.sdk.**
+
+# Kotlin runtime metadata often required by Android SDKs
+-keep class kotlin.Metadata { *; }
+-keep class kotlin.jvm.internal.** { *; }
+-dontwarn kotlin.**
+-dontwarn kotlinx.**
+
+# AppMetrica
+-keep class io.appmetrica.analytics.** { *; }
+-dontwarn io.appmetrica.analytics.**
+
+# Keep annotations and signatures used by SDK reflection
+-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
+
+# Keep enum values / names when accessed reflectively
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}

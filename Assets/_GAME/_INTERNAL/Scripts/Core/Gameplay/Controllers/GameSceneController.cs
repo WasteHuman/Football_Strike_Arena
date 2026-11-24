@@ -14,7 +14,7 @@ namespace Core.Gameplay.Controllers
 {
     public class GameSceneController : SceneController
     {
-        [Header("Controllers (View & Gmae)")]
+        [Header("Controllers (View & Game)")]
         [SerializeField] private PlayerInfoPanelView _playerInfoPanelView;
         [SerializeField] private PlayerController _playerController;
         [SerializeField] private TargetSystemController _targetSystemController;
@@ -93,6 +93,9 @@ namespace Core.Gameplay.Controllers
                 _gameplayTutorialView.Hide();
                 GameServices.PlayerService.MarkTutorialAsCompleted();
             }
+
+            if(GameServices.PlayerService.SessionPlayerScore > 0)
+                GameServices.PlayerService.ResetSessionScore();
 
             _gameplayTutorialView.gameObject.SetActive(false);
 
